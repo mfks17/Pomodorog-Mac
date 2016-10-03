@@ -11,7 +11,7 @@ import Cocoa
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
 
-
+    var statusItem: NSStatusItem?
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         // Insert code here to initialize your application
@@ -49,21 +49,20 @@ class AppDelegate: NSObject, NSApplicationDelegate {
  */
 
         let statusBar: NSStatusBar = NSStatusBar.system()
-        let statusItem: NSStatusItem = statusBar.statusItem(withLength: 60.0)
-        statusItem.title = "00:00"
-        statusItem.target = self
-        statusItem.isEnabled = true
+        statusItem = statusBar.statusItem(withLength: 60.0)
+        statusItem?.title = "00:00"
+        statusItem?.target = self
+        statusItem?.isEnabled = true
 
 
 
         let startMenuItem : NSMenuItem = NSMenuItem.init()
         startMenuItem.title = "Start"
 
-        let menu: NSMenu = NSMenu.init()
-        menu.title = "Start"
+        let menu: NSMenu = NSMenu.init(title: "weeeeei")
         menu.addItem(startMenuItem)
+        statusItem?.popUpMenu(menu)
 
-        statusItem.popUpMenu(menu)
 
 
     }
