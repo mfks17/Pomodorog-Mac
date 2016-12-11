@@ -49,26 +49,44 @@ class AppDelegate: NSObject, NSApplicationDelegate {
  */
 
         let statusBar: NSStatusBar = NSStatusBar.system()
-        statusItem = statusBar.statusItem(withLength: 60.0)
-        statusItem?.title = "00:00"
-        statusItem?.target = self
+        statusItem = statusBar.statusItem(withLength: NSVariableStatusItemLength)
         statusItem?.isEnabled = true
+        statusItem?.target = self
+        statusItem?.title = "00:00"
+        statusItem?.menu = NSMenu()
 
 
+        let startMenuItem : NSMenuItem = NSMenuItem.init(title: "Start", action: Selector(("Quit:")), keyEquivalent: "")
+        startMenuItem.target = self
+        startMenuItem.isEnabled = true
 
-        let startMenuItem : NSMenuItem = NSMenuItem.init()
-        startMenuItem.title = "Start"
+        
+        let stopMenuItem: NSMenuItem = NSMenuItem.init()
+        stopMenuItem.title = "Stop"
+        stopMenuItem.target = self
+        stopMenuItem.isEnabled = true
+        
+        let quitItem : NSMenuItem = NSMenuItem(title: "Quit", action: Selector(("Quit:")), keyEquivalent: "")
+        quitItem.isEnabled = true
+        quitItem.target = self
+        quitItem.action = #selector(Quit)
 
-        let menu: NSMenu = NSMenu.init(title: "weeeeei")
-        menu.addItem(startMenuItem)
-        statusItem?.popUpMenu(menu)
 
-
+        statusItem?.menu?.addItem(startMenuItem)
+        statusItem?.menu?.addItem(stopMenuItem)
+        statusItem?.menu?.addItem(NSMenuItem.separator())
+        statusItem?.menu?.addItem(quitItem)
+//        statusItem?.popUpMenu((statusItem?.menu)!)
 
     }
 
     func applicationWillTerminate(_ aNotification: Notification) {
         // Insert code here to tear down your application
+    }
+    
+    func Quit(sender: AnyObject?) {
+        NSLog("Exit")
+        NSApplication.shared().terminate(nil)
     }
 
 
