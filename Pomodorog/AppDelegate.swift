@@ -12,7 +12,13 @@ import Cocoa
 class AppDelegate: NSObject, NSApplicationDelegate {
 
     var statusItem: NSStatusItem?
+
+    var timer: Timer!
     
+    var startMenuItem: NSMenuItem!
+    var stopMenuItem: NSMenuItem!
+    var quitItem: NSMenuItem!
+
     //ユーザーが指定した時間(仮) 分
     let userTimer:Int = 1
     var count = 0
@@ -23,32 +29,35 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         // Insert code here to initialize your application
 
+        self.count = self.userTimer * 500
+
         let statusBar: NSStatusBar = NSStatusBar.system()
         statusItem = statusBar.statusItem(withLength: NSVariableStatusItemLength)
-        statusItem?.isEnabled = true
         statusItem?.target = self
         statusItem?.title = "00:00"
         statusItem?.menu = NSMenu()
+        statusItem?.menu?.autoenablesItems = false
 
-        let startMenuItem : NSMenuItem = NSMenuItem.init(title: "Start", action: Selector(("Start:")), keyEquivalent: "S")
+        self.startMenuItem = NSMenuItem.init(title: "Start", action: Selector(("Start:")), keyEquivalent: "S")
         startMenuItem.isEnabled = true
         startMenuItem.target = self
         startMenuItem.action = #selector(Start)
 
-        let stopMenuItem: NSMenuItem = NSMenuItem.init(title: "Stop", action: Selector(("Stop:")), keyEquivalent: "T")
+        stopMenuItem = NSMenuItem.init(title: "Stop", action: Selector(("Stop:")), keyEquivalent: "T")
+        stopMenuItem.isEnabled = false
         stopMenuItem.target = self
-        stopMenuItem.isEnabled = true
         stopMenuItem.action = #selector(Stop)
         
-        let quitItem : NSMenuItem = NSMenuItem(title: "Quit", action: Selector(("Quit:")), keyEquivalent: "q")
+        quitItem = NSMenuItem(title: "Quit", action: Selector(("Quit:")), keyEquivalent: "q")
         quitItem.isEnabled = true
         quitItem.target = self
         quitItem.action = #selector(Quit)
 
         statusItem?.menu?.addItem(startMenuItem)
-        statusItem?.menu?.addItem(stopMenuItem)
+        statusItem?.menu?.addItem(self.stopMenuItem)
         statusItem?.menu?.addItem(NSMenuItem.separator())
         statusItem?.menu?.addItem(quitItem)
+        statusItem?.menu?.item(at: 1)?.isEnabled = false
     }
 
     func applicationWillTerminate(_ aNotification: Notification) {
@@ -63,22 +72,36 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func Start(sender: AnyObject?) {
         NSLog("start")
         statusItem?.title = "25:00"
-        self.timer()
+        self.countDonw()
+        self.startMenuItem.isEnabled = false
+        if self.startMenuItem.title == "Restart" {
+            self.startMenuItem.title = "Start"
+        }
+        self.stopMenuItem.isEnabled = true
     }
 
     func Stop(sender: AnyObject?) {
         NSLog("stop")
+        if timer.isValid {
+            timer.invalidate()
+            self.startMenuItem.isEnabled = true
+            self.startMenuItem.title = "Restart"
+            self.stopMenuItem.isEnabled = false
+        } else {
+            self.countDonw()
+        }
+        
     }
     
-    func timer() -> Void {
-        self.count = self.userTimer * 500
-        _ = Timer.scheduledTimer(
+    func countDonw() -> Void {
+
+        timer = Timer.scheduledTimer(
             timeInterval: 1.0,
             target:self,
             selector: #selector(AppDelegate.timerAction),
             userInfo:nil,
             repeats:true)
-            .fire()
+        timer.fire()
     }
     
     func timerAction(sender: Timer) -> Void {
