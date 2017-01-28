@@ -12,6 +12,13 @@ import Cocoa
 class AppDelegate: NSObject, NSApplicationDelegate {
 
     var statusItem: NSStatusItem?
+    
+    //ユーザーが指定した時間(仮) 分
+    let userTimer:Int = 1
+    var count = 0
+    
+    var minString: String = ""
+    var secondSting: String = ""
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         // Insert code here to initialize your application
@@ -56,9 +63,30 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func Start(sender: AnyObject?) {
         NSLog("start")
         statusItem?.title = "25:00"
+        self.timer()
     }
 
     func Stop(sender: AnyObject?) {
         NSLog("stop")
+    }
+    
+    func timer() -> Void {
+        self.count = self.userTimer * 1500
+        _ = Timer.scheduledTimer(
+            timeInterval: 1.0,
+            target:self,
+            selector: #selector(AppDelegate.timerAction),
+            userInfo:nil,
+            repeats:true)
+            .fire()
+    }
+    
+    func timerAction(sender: Timer) -> Void {
+        
+        self.minString = String(count / 60)
+        self.secondSting = String(count % 60)
+        
+        statusItem?.title = minString + ":" + secondSting
+        self.count -= 1
     }
 }
