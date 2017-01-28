@@ -71,7 +71,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     func timer() -> Void {
-        self.count = self.userTimer * 1500
+        self.count = self.userTimer * 500
         _ = Timer.scheduledTimer(
             timeInterval: 1.0,
             target:self,
@@ -83,10 +83,26 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     func timerAction(sender: Timer) -> Void {
         
-        self.minString = String(count / 60)
-        self.secondSting = String(count % 60)
+        self.minString = calcMin(secCount: count)
+        self.secondSting = calcSec(secCount: count)
         
         statusItem?.title = minString + ":" + secondSting
         self.count -= 1
+    }
+    
+    fileprivate func calcMin (secCount: Int) -> String {
+        let min = count / 60
+        if min < 10 {
+            return "0" + String(min)
+        }
+        return String(min)
+    }
+    
+    fileprivate func calcSec (secCount: Int) -> String {
+        let sec = count % 60
+        if sec < 10 {
+            return "0" + String(sec)
+        }
+        return String(sec)
     }
 }
