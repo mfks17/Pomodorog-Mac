@@ -9,7 +9,7 @@
 import Cocoa
 
 @NSApplicationMain
-class AppDelegate: NSObject, NSApplicationDelegate {
+class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDelegate {
 
     var statusItem: NSStatusItem?
 
@@ -20,7 +20,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     var quitItem: NSMenuItem!
 
     //ユーザーが指定した時間(仮) 分
-    let userTimer:Int = 1
+    var userTimer:Int = 1500
     var count = 0
     
     var minString: String = ""
@@ -29,8 +29,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         // Insert code here to initialize your application
 
-        self.count = self.userTimer * 500
-
+        NSUserNotificationCenter.default.delegate = self
+        
+        self.count = self.userTimer
+        
         let statusBar: NSStatusBar = NSStatusBar.system()
         statusItem = statusBar.statusItem(withLength: NSVariableStatusItemLength)
         statusItem?.target = self
@@ -59,6 +61,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         statusItem?.menu?.addItem(quitItem)
         statusItem?.menu?.item(at: 1)?.isEnabled = false
     }
+    
+    func userNotificationCenter(_ center: NSUserNotificationCenter, didActivate notification: NSUserNotification) {
+        let info = notification.userInfo as! [String:String]
+        print("info= \(info)")
+    }
 
     func applicationWillTerminate(_ aNotification: Notification) {
         // Insert code here to tear down your application
@@ -71,7 +78,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     func Start(sender: AnyObject?) {
         NSLog("start")
-        statusItem?.title = "25:00"
+        if self.count <= 0 {
+            self.count = self.userTimer
+        }
         self.countDonw()
         self.startMenuItem.isEnabled = false
         if self.startMenuItem.title == "Restart" {
@@ -105,12 +114,19 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     func timerAction(sender: Timer) -> Void {
+        if count == 0 {
+            timer.invalidate()
+            self.createNotification()
+            self.startMenuItem.isEnabled = true
+            self.stopMenuItem.isEnabled = false
+        }
         
         self.minString = calcMin(secCount: count)
         self.secondSting = calcSec(secCount: count)
         
         statusItem?.title = minString + ":" + secondSting
         self.count -= 1
+
     }
     
     fileprivate func calcMin (secCount: Int) -> String {
@@ -127,5 +143,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             return "0" + String(sec)
         }
         return String(sec)
+    }
+    
+    func createNotification() -> Void {
+        let notification = NSUserNotification()
+        notification.title = "Pomodorog"
+        notification.subtitle = "It's time!"
+        notification.informativeText = "本文"
+        notification.userInfo = ["title" : "タイトル"]
+        NSUserNotificationCenter.default.deliver(notification)
     }
 }
