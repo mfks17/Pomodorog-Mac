@@ -38,23 +38,23 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
         statusItem?.menu = NSMenu()
         statusItem?.menu?.autoenablesItems = false
 
-        self.startMenuItem = NSMenuItem.init(title: "Start", action: Selector(("Start:")), keyEquivalent: "S")
+        startMenuItem = NSMenuItem.init(title: "Start", action: Selector(("Start:")), keyEquivalent: "")
         startMenuItem.isEnabled = true
         startMenuItem.target = self
         startMenuItem.action = #selector(Start)
 
-        stopMenuItem = NSMenuItem.init(title: "Stop", action: Selector(("Stop:")), keyEquivalent: "T")
+        stopMenuItem = NSMenuItem.init(title: "Stop", action: Selector(("Stop:")), keyEquivalent: "")
         stopMenuItem.isEnabled = false
         stopMenuItem.target = self
         stopMenuItem.action = #selector(Stop)
         
-        quitItem = NSMenuItem(title: "Quit", action: Selector(("Quit:")), keyEquivalent: "q")
+        quitItem = NSMenuItem(title: "Quit", action: Selector(("Quit:")), keyEquivalent: "")
         quitItem.isEnabled = true
         quitItem.target = self
         quitItem.action = #selector(Quit)
 
         statusItem?.menu?.addItem(startMenuItem)
-        statusItem?.menu?.addItem(self.stopMenuItem)
+        statusItem?.menu?.addItem(stopMenuItem)
         statusItem?.menu?.addItem(NSMenuItem.separator())
         statusItem?.menu?.addItem(quitItem)
         statusItem?.menu?.item(at: 1)?.isEnabled = false
@@ -108,7 +108,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
             selector: #selector(AppDelegate.timerAction),
             userInfo:nil,
             repeats:true)
-        timer.fire()
+        RunLoop.current.add(timer, forMode: RunLoopMode.commonModes)
     }
     
     func timerAction(sender: Timer) -> Void {
