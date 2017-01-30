@@ -30,13 +30,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
         // Insert code here to initialize your application
 
         NSUserNotificationCenter.default.delegate = self
-        
         self.count = self.userTimer
-        
         let statusBar: NSStatusBar = NSStatusBar.system()
         statusItem = statusBar.statusItem(withLength: NSVariableStatusItemLength)
         statusItem?.target = self
-        statusItem?.title = "00:00"
+        statusItem?.attributedTitle = stringToAttributeString(string: "00:00")
         statusItem?.menu = NSMenu()
         statusItem?.menu?.autoenablesItems = false
 
@@ -124,7 +122,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
         self.minString = calcMin(secCount: count)
         self.secondSting = calcSec(secCount: count)
         
-        statusItem?.title = minString + ":" + secondSting
+        statusItem?.attributedTitle = stringToAttributeString(string: (minString + ":" + secondSting))
         self.count -= 1
 
     }
@@ -152,5 +150,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
         notification.informativeText = "本文"
         notification.userInfo = ["title" : "タイトル"]
         NSUserNotificationCenter.default.deliver(notification)
+    }
+    
+    func stringToAttributeString(string: String!) -> NSAttributedString {
+        return NSAttributedString(
+            string: String(string),
+            attributes: [NSForegroundColorAttributeName: NSColor.gray,
+                         NSFontAttributeName: NSFont.monospacedDigitSystemFont(ofSize: 15.0, weight: NSFontWeightRegular)])
     }
 }
