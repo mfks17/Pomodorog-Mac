@@ -155,7 +155,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
     func stringToAttributeString(string: String!) -> NSAttributedString {
         return NSAttributedString(
             string: String(string),
-            attributes: [NSForegroundColorAttributeName: NSColor.gray,
-                         NSFontAttributeName: NSFont.monospacedDigitSystemFont(ofSize: 15.0, weight: NSFontWeightRegular)])
+            attributes: [NSForegroundColorAttributeName: NSColor.labelColor,
+                         NSFontAttributeName: NSFont.monospacedDigitSystemFont(ofSize: 13.0, weight: NSFontWeightRegular)])
     }
 }
