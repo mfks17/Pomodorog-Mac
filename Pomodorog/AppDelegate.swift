@@ -76,6 +76,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
 
     func Start(sender: AnyObject?) {
         NSLog("start")
+        print(currentDateString(locale: "en_US"))
         if self.count <= 0 {
             self.count = self.userTimer
         }
@@ -89,6 +90,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
 
     func Stop(sender: AnyObject?) {
         NSLog("stop")
+        print(currentDateString(locale: "en_US"))
         if timer.isValid {
             timer.invalidate()
             self.startMenuItem.isEnabled = true
@@ -113,6 +115,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
     
     func timerAction(sender: Timer) -> Void {
         if count == 0 {
+            print(currentDateString(locale: "en_US"))
             timer.invalidate()
             self.createNotification()
             self.startMenuItem.isEnabled = true
@@ -156,6 +159,14 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
         return NSAttributedString(
             string: String(string),
             attributes: [NSForegroundColorAttributeName: NSColor.labelColor,
-                         NSFontAttributeName: NSFont.monospacedDigitSystemFont(ofSize: 13.0, weight: NSFontWeightRegular)])
+                         NSFontAttributeName: NSFont.monospacedDigitSystemFont(ofSize: 14.0, weight: NSFontWeightRegular)])
+    }
+    
+    func currentDateString(locale: String) -> String {
+        let now = NSDate() // 現在日時の取得
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = NSLocale(localeIdentifier: locale) as Locale! // ロケールの設定
+        dateFormatter.dateFormat = "yyyy/MM/dd HH:mm:ss" // 日付フォーマットの設定
+        return dateFormatter.string(from: now as Date) // -> 2014/06/25 02:13:18
     }
 }
